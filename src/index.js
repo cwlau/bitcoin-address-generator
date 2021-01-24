@@ -1,22 +1,59 @@
 "use strict";
-var express = require('express');
-var app = express();
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// import * as assert from 'assert';
+var bitcoin = __importStar(require("bitcoinjs-lib"));
+var express_1 = __importDefault(require("express"));
+var app = express_1.default();
 var PORT = 8000;
-var btcnodejs = require('btcnodejs');
-btcnodejs.network.setup('testnet');
-var p2pkh = new btcnodejs.P2pkhScript(btcnodejs.Publickey.fromHex("026263992eda6538202047f1514e0f6155a229c3d61b066807664e9ef73d406d95"));
-var multisig = new btcnodejs.MultiSigScript([
-    2,
-    btcnodejs.Publickey.fromHex("02c08786d63f78bd0a6777ffe9c978cf5899756cfc32bfad09a89e211aeb926242"),
-    btcnodejs.Publickey.fromHex("033e81519ecf373ea3a5c7e1c051b71a898fb3438c9550e274d980f147eb4d069d"),
-    btcnodejs.Publickey.fromHex("036d568125a969dc78b963b494fa7ed5f20ee9c2f2fc2c57f86c5df63089f2ed3a"),
-    3
-]);
-// const ie_script = new btcnodejs.IfElseScript([p2pkh, multisig])
 app.get('/', function (req, res) {
-    console.log(p2pkh);
-    console.log(multisig);
-    // console.log(ie_script);
+    if (req.method === 'OPTIONS') {
+        // Send response to OPTIONS requests
+        res.set('Access-Control-Allow-Methods', 'POST');
+        res.set('Access-Control-Allow-Headers', 'Content-Type');
+        res.set('Access-Control-Max-Age', '3600');
+        res.status(204).send('');
+    }
+    console.log(req.query.m);
+    console.log(req.query.pubkeys);
+    var pubkeys = [
+        '026477115981fe981a6918a6297d9803c4dc04f328f22041bedff886bbc2962e01',
+        '02c96db2302d19b43d4c69368babace7854cc84eb9e061cde51cfa77ca4a22b8b9',
+        '023e4740d0ba639e28963f3476157b7cf2fb7c6fdf4254f97099cf8670b505ea59',
+        '03c6103b3b83e4a24a0e33a4df246ef11772f9992663db0c35759a5e2ebf68d8e9',
+    ].map(function (hex) { return Buffer.from(hex, 'hex'); });
+    var address = bitcoin.payments.p2wsh({
+        redeem: bitcoin.payments.p2ms({ m: 3, pubkeys: pubkeys }),
+    }).address;
+    console.log({ address: address });
+    return res.send('Express + TypeScript Server');
+});
+app.get('/api/generate', function (req, res) {
+    return res.send("Method not allowed");
+});
+app.post('/api/generate', function (req, res) {
+    res.set('Access-Control-Allow-Origin', '*');
     return res.send('Express + TypeScript Server');
 });
 app.listen(PORT, function () {

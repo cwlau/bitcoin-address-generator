@@ -2,9 +2,7 @@
 // import * as bitcoin from 'bitcoinjs-lib';
 import * as React from 'react';
 
-
 export default function HDSegwitAddressForm() {
-
 
   // const pubkeys = [
   //   '026477115981fe981a6918a6297d9803c4dc04f328f22041bedff886bbc2962e01',
@@ -16,9 +14,7 @@ export default function HDSegwitAddressForm() {
   //   redeem: bitcoin.payments.p2ms({ m: 3, pubkeys }),
   // });
 
-
   // console.log({address});
-
 
   return (
     <div className="app">Hello from HDSegwitAddressForm</div>

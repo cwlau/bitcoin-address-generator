@@ -3,7 +3,6 @@
 (window as any).global = window;
 global.Buffer = global.Buffer || require('buffer').Buffer;
 
-
 // import * as bitcoin from 'bitcoinjs-lib';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -14,17 +13,7 @@ import './style/app.scss';
 import HDSegwitAddressForm from './components/HDSegwitAddressForm';
 import MultiSigAddressForm from './components/MultiSigAddressForm';
 
-// export default class AApp extends React.Component {
-//   render() {
-//     return (
-//       <div className="app">Hello world 2</div>
-//     )
-//   }
-// }
-
-
 function App() {
-
 
   // const pubkeys = [
   //   '026477115981fe981a6918a6297d9803c4dc04f328f22041bedff886bbc2962e01',
@@ -36,26 +25,21 @@ function App() {
   //   redeem: bitcoin.payments.p2ms({ m: 3, pubkeys }),
   // });
 
-
   // console.log({address});
-
 
   return (
     <div className="container">
       <h2 className="header">Bitcoin Address Generator</h2>
-
 
       <hr/>
 
       <h4 className="header">Generate a HD SegWit Bitcoin Address</h4>
       <HDSegwitAddressForm />
 
-
       <hr/>
 
       <h4 className="header">Generate a m-of-n Multi-sig P2SH Bitcoin Address</h4>
       <MultiSigAddressForm />
-
 
       <hr/>
 
@@ -63,7 +47,6 @@ function App() {
     </div>
   )
 }
-
 
 ReactDOM.render(
   <App />,

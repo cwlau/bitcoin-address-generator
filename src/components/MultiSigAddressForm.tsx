@@ -43,15 +43,31 @@ export default function MultiSigAddressForm() {
     //   '03c6103b3b83e4a24a0e33a4df246ef11772f9992663db0c35759a5e2ebf68d8e9',
     // ].map(hex => Buffer.from(hex, 'hex'));
 
-    const pubkeys = pubkeyValues.map(hex => Buffer.from(hex, 'hex'));
-    const { address } = bitcoin.payments.p2wsh({
-      redeem: bitcoin.payments.p2ms({ m: mValue, pubkeys }),
-    });
+    try {
+      const pubkeys = pubkeyValues.map((hex: string) => Buffer.from(hex, 'hex'));
+      const { address } = bitcoin.payments.p2wsh({
+        redeem: bitcoin.payments.p2ms({ m: mValue, pubkeys }),
+      });
 
-    console.log('generateAddress done');
-    console.log({ address });
+      // console.log('generateAddress done');
+      // console.log({ address });
 
-    if (!address) {
+      if (!address) {
+        setAddress('');
+        setQRcodeUrl('');
+        setResultError(true);
+        setResultSuccess(false);
+        return;
+      }
+
+      setResultError(false);
+      setResultSuccess(true);
+      setAddress(address);
+
+    } catch (error) {
+
+      console.warn({error});
+
       setAddress('');
       setQRcodeUrl('');
       setResultError(true);
@@ -59,9 +75,6 @@ export default function MultiSigAddressForm() {
       return;
     }
 
-    setResultError(false);
-    setResultSuccess(true);
-    setAddress(address);
   }
 
   const clearResults = () => {
@@ -164,7 +177,14 @@ export default function MultiSigAddressForm() {
 
                 while (nValue >= pubkeyValues.length) {
                   pubkeyValues.push('');
+                  // setPubkeyValues([...pubkeyValues, '']);
                 }
+
+                // while (pubkeyValues.length - 1 >= nValue) {
+                //   // pubkeyValues.pop();
+                //   setPubkeyValues(pubkeyValues.slice(0, -1));
+                // }
+
                 forceUpdate();
               }
             }/>
@@ -205,7 +225,12 @@ export default function MultiSigAddressForm() {
         }
 
         {
-          resultError && <div className="error"></div>
+          resultError && <div className="alert alert-danger">
+            <h6>Error: Failed to generate Bitcoin Address</h6>
+            <div>
+              Please make sure the pubkeys are correctly filled.
+            </div>
+          </div>
         }
 
         <div style={{"float": "right"}}>

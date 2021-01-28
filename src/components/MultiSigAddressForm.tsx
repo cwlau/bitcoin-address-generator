@@ -1,21 +1,41 @@
 
 // import * as React from 'react';
-import React, { useState, useReducer } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import * as bitcoin from 'bitcoinjs-lib';
+import QRCode from 'qrcode';
 
 export default function MultiSigAddressForm() {
 
   const defaultPubkeyValues: string[] = ['', ''];
 
-  const [result, setResult] = useState({address: ''});
+  const [qrcodeUrl, setQRcodeUrl] = useState('');
+  const [address, setAddress] = useState('');
+  const [resultSuccess, setResultSuccess] = useState(false);
   const [resultError, setResultError] = useState(false);
+  const [resultErrorMessage, setResultErrorMessage] = useState("");
   const [mValue, setMValue] = useState(1);
   const [nValue, setNValue] = useState(2);
   const [pubkeyValues, setPubkeyValues] = useState(defaultPubkeyValues);
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-  const generateAddress = function() {
+  useEffect(() => {
+    if (address === '') {
+      return;
+    }
+
+    QRCode.toDataURL(address)
+      .then(url => {
+        console.log(url);
+        setQRcodeUrl(url);
+      })
+      .catch(err => {
+        console.error(err);
+      })
+  }, [address]);
+
+
+  const generateAddress = () => {
     // const pubkeys = [
     //   '026477115981fe981a6918a6297d9803c4dc04f328f22041bedff886bbc2962e01',
     //   '02c96db2302d19b43d4c69368babace7854cc84eb9e061cde51cfa77ca4a22b8b9',
@@ -32,23 +52,28 @@ export default function MultiSigAddressForm() {
     console.log({ address });
 
     if (!address) {
-      setResult({ address: '' });
+      setAddress('');
+      setQRcodeUrl('');
       setResultError(true);
+      setResultSuccess(false);
       return;
     }
 
     setResultError(false);
-    setResult({ address });
+    setResultSuccess(true);
+    setAddress(address);
   }
 
-  const clearResults = function() {
+  const clearResults = () => {
     setMValue(1);
     setNValue(2);
     setPubkeyValues(['', '']);
-    setResult({address: ''});
+    setResultError(false);
+    setResultSuccess(false);
+    setAddress('');
   }
 
-  const setValues = function() {
+  const setValues = () => {
 
     setMValue(3);
     setNValue(4);
@@ -62,7 +87,7 @@ export default function MultiSigAddressForm() {
     // console.log('setValues done');
   }
 
-  const renderInupts = function() {
+  const renderInupts = () => {
 
     let result: any;
     pubkeyValues.forEach((input: string) => {
@@ -72,20 +97,23 @@ export default function MultiSigAddressForm() {
     return result;
   }
 
-  const setPubkeyValueOnPosition = function(position: number, value: string) {
+  const setPubkeyValueOnPosition = (position: number, value: string) => {
     let finalPubkeyList = pubkeyValues;
     finalPubkeyList[position] = value;
     setPubkeyValues(finalPubkeyList);
     forceUpdate();
   }
 
-  const generatePubkeyInputFields = function() {
+  const generatePubkeyInputFields = () => {
     let index: number = 0;
     let resultInputs: any[] = [];
     while (index < nValue) {
       let _index = Number(index);
-      resultInputs.push(<div key={_index} className="pubkeys-input-container">
-                          <input type="text" value={pubkeyValues[_index]} onChange={
+      resultInputs.push(<div key={_index} className="pubkeys-input-container input-group mb-3">
+                          <span className="input-group-text">Pubkey { _index + 1 }</span>
+                          <input type="text" value={pubkeyValues[_index]} className="form-control"
+                          aria-label="pubkey" aria-describedby={"pubkey" + (_index + 1) }
+                          onChange={
                             (e: React.ChangeEvent<HTMLInputElement>) => {
                               return setPubkeyValueOnPosition(_index, e.target.value)
                             }
@@ -160,13 +188,37 @@ export default function MultiSigAddressForm() {
           </div>
         </div>
 
+        <hr/>
+
+        {
+          resultSuccess && <div className="alert alert-success">
+            <h5>The generated Bitcoin Address:</h5>
+            <hr/>
+            <div className="result-container" style={{"textAlign": "center"}}>
+              <div className="result-qrcode-div">{qrcodeUrl && <img src={qrcodeUrl} className="qrcode-img" />}</div>
+              <div className="result-address">{address}</div>
+              <div className="result-address">
+                <a href={ "https://www.blockchain.com/btc/address/" + address } target="blank">View on Blockchain.com</a>
+              </div>
+            </div>
+          </div>
+        }
+
+        {
+          resultError && <div className="error"></div>
+        }
+
+        <div style={{"float": "right"}}>
+          <input className="btn btn-default" type="button" onClick={setValues} value="Set Sample Values" />
+        </div>
+
+        <div>
+          <input className="btn btn-primary" type="button" onClick={generateAddress} value="Generate Address" />
+          <input className="btn btn-default" type="button" onClick={clearResults} value="Clear Results and Reset Form" />
+        </div>
+
       </div>
 
-      <hr/>
-
-      <input className="btn btn-default" type="button" onClick={setValues} value="Set Value" />
-      <input className="btn btn-primary" type="button" onClick={generateAddress} value="Generate Address" />
-      <input className="btn btn-default" type="button" onClick={clearResults} value="Clear Results and Reset Form" />
     </div>
   )
 }

@@ -1,5 +1,4 @@
 
-// import * as React from 'react';
 import React, { useState, useReducer, useEffect } from 'react';
 import * as bitcoin from 'bitcoinjs-lib';
 import QRCode from 'qrcode';

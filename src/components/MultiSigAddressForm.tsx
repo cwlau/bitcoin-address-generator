@@ -172,21 +172,23 @@ export default function MultiSigAddressForm() {
             <input type="range" className="form-range" min="2" max="10" value={nValue} step="1" id="n-value" onChange={
               (e: React.ChangeEvent<HTMLInputElement>) => {
                 const newNValue = Number(e.target.value);
+
+                if (newNValue < nValue) {
+                  while (newNValue < pubkeyValues.length) {
+                    pubkeyValues.pop();
+                  }
+                }
+
                 setNValue(newNValue);
                 if (mValue > newNValue) {
                   setMValue(newNValue - 1);
                 }
 
-                while (nValue >= pubkeyValues.length) {
+                while (newNValue > pubkeyValues.length) {
                   pubkeyValues.push('');
-                  // setPubkeyValues([...pubkeyValues, '']);
                 }
 
-                // while (pubkeyValues.length - 1 >= nValue) {
-                //   // pubkeyValues.pop();
-                //   setPubkeyValues(pubkeyValues.slice(0, -1));
-                // }
-
+                setResultSuccess(false);
                 forceUpdate();
               }
             }/>
@@ -208,6 +210,17 @@ export default function MultiSigAddressForm() {
           }
 
           </div>
+        </div>
+
+        <hr/>
+
+        <div style={{"float": "right"}}>
+          <input className="btn btn-default" type="button" onClick={setValues} value="Set Sample Values" />
+        </div>
+
+        <div>
+          <input className="btn btn-primary" type="button" onClick={generateAddress} value="Generate Address" />
+          <input className="btn btn-default" type="button" onClick={clearResults} value="Clear Results and Reset Form" />
         </div>
 
         <hr/>
@@ -234,15 +247,6 @@ export default function MultiSigAddressForm() {
             </div>
           </div>
         }
-
-        <div style={{"float": "right"}}>
-          <input className="btn btn-default" type="button" onClick={setValues} value="Set Sample Values" />
-        </div>
-
-        <div>
-          <input className="btn btn-primary" type="button" onClick={generateAddress} value="Generate Address" />
-          <input className="btn btn-default" type="button" onClick={clearResults} value="Clear Results and Reset Form" />
-        </div>
 
       </div>
 

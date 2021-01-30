@@ -71,6 +71,7 @@ export default function MultiSigAddressForm() {
       setAddress('');
       setQRcodeUrl('');
       setResultError(true);
+      setResultErrorMessage("Error found with Pubkey #" + (Number(error.__property.replace("pubkeys.", "")) + 1));
       setResultSuccess(false);
       return;
     }
@@ -83,6 +84,7 @@ export default function MultiSigAddressForm() {
     setPubkeyValues(['', '']);
     setResultError(false);
     setResultSuccess(false);
+    setResultErrorMessage('');
     setAddress('');
   }
 
@@ -228,7 +230,7 @@ export default function MultiSigAddressForm() {
           resultError && <div className="alert alert-danger">
             <h6>Error: Failed to generate Bitcoin Address</h6>
             <div>
-              Please make sure the pubkeys are correctly filled.
+              Please make sure the pubkeys are correctly filled. ({resultErrorMessage})
             </div>
           </div>
         }

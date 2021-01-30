@@ -123,7 +123,7 @@ export default function MultiSigAddressForm() {
     let resultInputs: any[] = [];
     while (index < nValue) {
       let _index = Number(index);
-      resultInputs.push(<div key={_index} className="pubkeys-input-container input-group mb-3">
+      resultInputs.push(<div key={_index} className="input-container input-group mb-3">
                           <span className="input-group-text">Pubkey { _index + 1 }</span>
                           <input type="text" value={pubkeyValues[_index]} className="form-control"
                           aria-label="pubkey" aria-describedby={"pubkey" + (_index + 1) }
@@ -200,7 +200,7 @@ export default function MultiSigAddressForm() {
 
         <div className="mb-3 row">
           <div className="col-12 col-sm-3">
-            Pubkeys
+            Pubkeys <br/><span className="small">(Change value of n to add more pubkeys)</span>
           </div>
 
           <div className="col-12 col-sm-9">

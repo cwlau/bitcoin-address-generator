@@ -25,7 +25,7 @@ export default function MultiSigAddressForm() {
 
     QRCode.toDataURL(address)
       .then(url => {
-        console.log(url);
+        // console.log(url);
         setQRcodeUrl(url);
       })
       .catch(err => {
@@ -138,7 +138,7 @@ export default function MultiSigAddressForm() {
 
         <div className="mb-3 row">
           <div className="col-12 col-sm-3">
-            <label htmlFor="m-value" className="form-label">Number of approvals <br/><span className="small">(Value of m)</span></label>
+            <label htmlFor="m-value" className="form-label">Number of signatures required <br/><span className="small">(Value of m)</span></label>
           </div>
 
           <div className="col-12 col-sm-9">
@@ -157,11 +157,11 @@ export default function MultiSigAddressForm() {
 
         <div className="mb-3 row">
           <div className="col-12 col-sm-3">
-            <label htmlFor="n-value" className="form-label">Total number of public keys <br/><span className="small">(Value of n)</span></label>
+            <label htmlFor="n-value" className="form-label">Number of public keys <br/><span className="small">(Value of n)</span></label>
           </div>
 
           <div className="col-12 col-sm-9">
-            <input type="range" className="form-range" min="2" max="10" value={nValue} step="1" id="n-value" onChange={
+            <input type="range" className="form-range" min="2" max="15" value={nValue} step="1" id="n-value" onChange={
               (e: React.ChangeEvent<HTMLInputElement>) => {
                 const newNValue = Number(e.target.value);
 

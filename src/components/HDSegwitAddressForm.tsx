@@ -23,7 +23,7 @@ export default function HDSegwitAddressForm() {
 
     QRCode.toDataURL(address)
       .then(url => {
-        console.log(url);
+        // console.log(url);
         setQRcodeUrl(url);
       })
       .catch(err => {
@@ -42,7 +42,6 @@ export default function HDSegwitAddressForm() {
         userKey.toWIF()
       );
       const { address } = bitcoin.payments.p2wpkh({ pubkey: userKeyPair.publicKey });
-      // console.log({ address });
 
       if (!address) {
         setAddress('');

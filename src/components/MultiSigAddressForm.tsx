@@ -35,21 +35,11 @@ export default function MultiSigAddressForm() {
 
 
   const generateAddress = () => {
-    // const pubkeys = [
-    //   '026477115981fe981a6918a6297d9803c4dc04f328f22041bedff886bbc2962e01',
-    //   '02c96db2302d19b43d4c69368babace7854cc84eb9e061cde51cfa77ca4a22b8b9',
-    //   '023e4740d0ba639e28963f3476157b7cf2fb7c6fdf4254f97099cf8670b505ea59',
-    //   '03c6103b3b83e4a24a0e33a4df246ef11772f9992663db0c35759a5e2ebf68d8e9',
-    // ].map(hex => Buffer.from(hex, 'hex'));
-
     try {
       const pubkeys = pubkeyValues.map((hex: string) => Buffer.from(hex, 'hex'));
       const { address } = bitcoin.payments.p2sh({
         redeem: bitcoin.payments.p2ms({ m: mValue, pubkeys }),
       });
-
-      // console.log('generateAddress done');
-      // console.log({ address });
 
       if (!address) {
         setAddress('');
@@ -78,6 +68,9 @@ export default function MultiSigAddressForm() {
   }
 
   const clearResults = () => {
+    const confirmed = confirm("Clear form values?");
+    if (!confirmed) {return;}
+
     setMValue(1);
     setNValue(2);
     setPubkeyValues(['', '']);
@@ -145,7 +138,7 @@ export default function MultiSigAddressForm() {
 
         <div className="mb-3 row">
           <div className="col-12 col-sm-3">
-            <label htmlFor="m-value" className="form-label">Value of m</label>
+            <label htmlFor="m-value" className="form-label">Number of approvals <br/><span className="small">(Value of m)</span></label>
           </div>
 
           <div className="col-12 col-sm-9">
@@ -164,7 +157,7 @@ export default function MultiSigAddressForm() {
 
         <div className="mb-3 row">
           <div className="col-12 col-sm-3">
-            <label htmlFor="n-value" className="form-label">Value of n</label>
+            <label htmlFor="n-value" className="form-label">Total number of public keys <br/><span className="small">(Value of n)</span></label>
           </div>
 
           <div className="col-12 col-sm-9">
@@ -200,7 +193,7 @@ export default function MultiSigAddressForm() {
 
         <div className="mb-3 row">
           <div className="col-12 col-sm-3">
-            Pubkeys <br/><span className="small">(Change value of n to add more pubkeys)</span>
+            Public Keys <br/><span className="small">(Change value of n to add more pubkeys)</span>
           </div>
 
           <div className="col-12 col-sm-9">

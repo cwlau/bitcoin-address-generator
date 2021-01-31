@@ -1,6 +1,7 @@
 
 import React, { useState, useReducer, useEffect } from 'react';
 import * as bitcoin from 'bitcoinjs-lib';
+import { bip32 } from 'bitcoinjs-lib';
 import QRCode from 'qrcode';
 
 export default function HDSegwitAddressForm() {
@@ -32,41 +33,47 @@ export default function HDSegwitAddressForm() {
 
   const generateAddress = () => {
     try {
-      // const pubkeys = pubkeyValues.map((hex: string) => Buffer.from(hex, 'hex'));
-      // const { address } = bitcoin.payments.p2sh({
-      //   redeem: bitcoin.payments.p2ms({ m: mValue, pubkeys }),
-      // });
+      const bitcoinNetwork = bitcoin.networks.bitcoin;
+      const hdMaster = bip32.fromSeed(Buffer.from(seed, 'hex'), bitcoinNetwork)
 
-      // // console.log('generateAddress done');
-      // // console.log({ address });
+      const userKey = hdMaster.derivePath(path);
 
-      // if (!address) {
-      //   setAddress('');
-      //   setQRcodeUrl('');
-      //   setResultError(true);
-      //   setResultSuccess(false);
-      //   return;
-      // }
+      const userKeyPair = bitcoin.ECPair.fromWIF(
+        userKey.toWIF()
+      );
+      const { address } = bitcoin.payments.p2wpkh({ pubkey: userKeyPair.publicKey });
+      // console.log({ address });
 
-      // setResultError(false);
-      // setResultSuccess(true);
-      // setAddress(address);
+      if (!address) {
+        setAddress('');
+        setQRcodeUrl('');
+        setResultError(true);
+        setResultSuccess(false);
+        return;
+      }
+
+      setResultError(false);
+      setResultSuccess(true);
+      setAddress(address);
 
     } catch (error) {
 
       console.warn({error});
 
-      // setAddress('');
-      // setQRcodeUrl('');
-      // setResultError(true);
-      // setResultErrorMessage("Error found with Pubkey #" + (Number(error.__property.replace("pubkeys.", "")) + 1));
-      // setResultSuccess(false);
+      setAddress('');
+      setQRcodeUrl('');
+      setResultError(true);
+      setResultErrorMessage(error.toString());
+      setResultSuccess(false);
       return;
     }
 
   }
 
   const clearResults = () => {
+    const confirmed = confirm("Clear form values?");
+    if (!confirmed) {return;}
+
     setSeed('');
     setPath('');
     setResultError(false);
@@ -77,14 +84,11 @@ export default function HDSegwitAddressForm() {
 
   const setValues = () => {
 
-    // Sample from https://github.com/bitcoinjs/bitcoinjs-lib/blob/master/test/integration/addresses.spec.ts#L40
-    setSeed('');
-    setPath('');
+    setSeed('5eb00bbddcf069084889a8ab9155568165f5c453ccb85e70811aaed6f6da5fc19a5ac40b389cd370d086206dec8aa6c43daea6690f20ad3d8d48b2d2ce9e38e4');
+    setPath('m/0/0');
 
-    // Generated address should equal to 36NUkt6FWUi3LAWBqWRdDmdTWbt91Yvfu7
+    // Generated address should equal to bc1qrh98qvlnec9k9au5auntfj3y2tmmw9w0353lqd
   }
-
-
 
   return (
     <div className="form">
@@ -111,7 +115,7 @@ export default function HDSegwitAddressForm() {
           </div>
 
           <div className="col-12 col-sm-9">
-            <input type="text" className="form-control" value={path}
+            <input type="text" className="form-control" value={path} placeholder="BIP32 compatible paths e.g. m/0/0"
                 id="path" onChange={
                   (e: React.ChangeEvent<HTMLInputElement>) => setPath(e.target.value)
                 }

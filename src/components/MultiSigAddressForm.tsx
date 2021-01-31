@@ -11,7 +11,7 @@ export default function MultiSigAddressForm() {
   const [address, setAddress] = useState('');
   const [resultSuccess, setResultSuccess] = useState(false);
   const [resultError, setResultError] = useState(false);
-  const [resultErrorMessage, setResultErrorMessage] = useState("");
+  const [resultErrorMessage, setResultErrorMessage] = useState('');
   const [mValue, setMValue] = useState(1);
   const [nValue, setNValue] = useState(2);
   const [pubkeyValues, setPubkeyValues] = useState(defaultPubkeyValues);
@@ -33,12 +33,11 @@ export default function MultiSigAddressForm() {
       })
   }, [address]);
 
-
   const generateAddress = () => {
     try {
       const pubkeys = pubkeyValues.map((hex: string) => Buffer.from(hex, 'hex'));
       const { address } = bitcoin.payments.p2sh({
-        redeem: bitcoin.payments.p2ms({ m: mValue, pubkeys }),
+        redeem: bitcoin.payments.p2ms({ pubkeys, m: mValue }),
       });
 
       if (!address) {
@@ -55,12 +54,12 @@ export default function MultiSigAddressForm() {
 
     } catch (error) {
 
-      console.warn({error});
+      console.warn({ error });
 
       setAddress('');
       setQRcodeUrl('');
       setResultError(true);
-      setResultErrorMessage("Error found with Pubkey #" + (Number(error.__property.replace("pubkeys.", "")) + 1));
+      setResultErrorMessage(`Error found with Pubkey #${(Number(error.__property.replace('pubkeys.', '')) + 1)}`);
       setResultSuccess(false);
       return;
     }
@@ -68,8 +67,10 @@ export default function MultiSigAddressForm() {
   }
 
   const clearResults = () => {
-    const confirmed = confirm("Clear form values?");
-    if (!confirmed) {return;}
+    const confirmed = confirm('Clear form values?');
+    if (!confirmed) {
+      return;
+    }
 
     setMValue(1);
     setNValue(2);
@@ -105,7 +106,7 @@ export default function MultiSigAddressForm() {
   }
 
   const setPubkeyValueOnPosition = (position: number, value: string) => {
-    let finalPubkeyList = pubkeyValues;
+    const finalPubkeyList = pubkeyValues;
     finalPubkeyList[position] = value;
     setPubkeyValues(finalPubkeyList);
     forceUpdate();
@@ -113,13 +114,13 @@ export default function MultiSigAddressForm() {
 
   const generatePubkeyInputFields = () => {
     let index: number = 0;
-    let resultInputs: any[] = [];
+    const resultInputs: any[] = [];
     while (index < nValue) {
-      let _index = Number(index);
+      const _index = Number(index);
       resultInputs.push(<div key={_index} className="input-container input-group mb-3">
                           <span className="input-group-text">Pubkey { _index + 1 }</span>
-                          <input type="text" value={pubkeyValues[_index]} className="form-control"
-                          aria-label="pubkey" aria-describedby={"pubkey" + (_index + 1) }
+                          <input type="text" value={ pubkeyValues[_index] } className="form-control"
+                          aria-label="pubkey" aria-describedby={ `pubkey${(_index + 1)}` }
                           onChange={
                             (e: React.ChangeEvent<HTMLInputElement>) => {
                               return setPubkeyValueOnPosition(_index, e.target.value)
@@ -206,7 +207,7 @@ export default function MultiSigAddressForm() {
 
         <hr/>
 
-        <div style={{"float": "right"}}>
+        <div style={{ float: 'right' }}>
           <input className="btn btn-default" type="button" onClick={setValues} value="Set Sample Values" />
         </div>
 
@@ -221,11 +222,11 @@ export default function MultiSigAddressForm() {
           resultSuccess && <div className="alert alert-success">
             <h5>The generated Bitcoin Address:</h5>
             <hr/>
-            <div className="result-container" style={{"textAlign": "center"}}>
-              <div className="result-qrcode-div">{qrcodeUrl && <img src={qrcodeUrl} className="qrcode-img" />}</div>
+            <div className="result-container" style={{ textAlign: 'center' }}>
+              <div className="result-qrcode-div">{qrcodeUrl && <img src={ qrcodeUrl } className="qrcode-img" />}</div>
               <div className="result-address">{address}</div>
               <div className="result-address">
-                <a href={ "https://www.blockchain.com/btc/address/" + address } target="blank">View on Blockchain.com</a>
+                <a href={ `https://www.blockchain.com/btc/address/${address}` } target="blank">View on Blockchain.com</a>
               </div>
             </div>
           </div>

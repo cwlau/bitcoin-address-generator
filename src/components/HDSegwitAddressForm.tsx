@@ -1,7 +1,6 @@
 
 import React, { useState, useReducer, useEffect } from 'react';
 import * as bitcoin from 'bitcoinjs-lib';
-import { bip32 } from 'bitcoinjs-lib';
 import QRCode from 'qrcode';
 
 export default function HDSegwitAddressForm() {
@@ -12,7 +11,7 @@ export default function HDSegwitAddressForm() {
   const [address, setAddress] = useState('');
   const [resultSuccess, setResultSuccess] = useState(false);
   const [resultError, setResultError] = useState(false);
-  const [resultErrorMessage, setResultErrorMessage] = useState("");
+  const [resultErrorMessage, setResultErrorMessage] = useState('');
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -34,7 +33,7 @@ export default function HDSegwitAddressForm() {
   const generateAddress = () => {
     try {
       const bitcoinNetwork = bitcoin.networks.bitcoin;
-      const hdMaster = bip32.fromSeed(Buffer.from(seed, 'hex'), bitcoinNetwork)
+      const hdMaster = bitcoin.bip32.fromSeed(Buffer.from(seed, 'hex'), bitcoinNetwork)
 
       const userKey = hdMaster.derivePath(path);
 
@@ -57,7 +56,7 @@ export default function HDSegwitAddressForm() {
 
     } catch (error) {
 
-      console.warn({error});
+      console.warn({ error });
 
       setAddress('');
       setQRcodeUrl('');
@@ -70,8 +69,10 @@ export default function HDSegwitAddressForm() {
   }
 
   const clearResults = () => {
-    const confirmed = confirm("Clear form values?");
-    if (!confirmed) {return;}
+    const confirmed = confirm('Clear form values?');
+    if (!confirmed) {
+      return;
+    }
 
     setSeed('');
     setPath('');
@@ -124,7 +125,7 @@ export default function HDSegwitAddressForm() {
 
         <hr/>
 
-        <div style={{"float": "right"}}>
+        <div style={{ float: 'right' }}>
           <input className="btn btn-default" type="button" onClick={setValues} value="Set Sample Values" />
         </div>
 
@@ -139,11 +140,11 @@ export default function HDSegwitAddressForm() {
           resultSuccess && <div className="alert alert-success">
             <h5>The generated Bitcoin Address:</h5>
             <hr/>
-            <div className="result-container" style={{"textAlign": "center"}}>
-              <div className="result-qrcode-div">{qrcodeUrl && <img src={qrcodeUrl} className="qrcode-img" />}</div>
-              <div className="result-address">{address}</div>
+            <div className="result-container" style={{ textAlign: 'center' }}>
+              <div className="result-qrcode-div">{ qrcodeUrl && <img src={ qrcodeUrl } className="qrcode-img" /> }</div>
+              <div className="result-address">{ address }</div>
               <div className="result-address">
-                <a href={ "https://www.blockchain.com/btc/address/" + address } target="blank">View on Blockchain.com</a>
+                <a href={ `https://www.blockchain.com/btc/address/${address}` } target="blank">View on Blockchain.com</a>
               </div>
             </div>
           </div>

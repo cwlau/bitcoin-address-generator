@@ -3,8 +3,20 @@ body {
     font-family: 'Nunito', sans-serif !important;
 }
 
+.page-header.header {
+    padding-top: 50px;
+}
+
 .header {
     padding-top: 20px;
+}
+
+.fork-me {
+    height: 140px;
+    width: 140px;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 .form {
@@ -49,4 +61,8 @@ input[type=range] {
     .result-address {
         margin: 8px;
     }
+}
+
+.footer {
+    margin-bottom: 20px;
 }

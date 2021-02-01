@@ -8,7 +8,7 @@ module.exports = {
     main: './src/index.tsx'
   },
   output: {
-    filename: "bundle.js",
+    filename: 'bundle.js',
     path: path.join(__dirname, '../dist/'),
     publicPath: '/'
   },
@@ -16,8 +16,8 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
     fallback: {
-      "buffer": require.resolve("buffer/"),
-      "stream": require.resolve("stream-browserify")
+      'buffer': require.resolve('buffer/'),
+      'stream': require.resolve('stream-browserify')
     }
   },
   devServer: {

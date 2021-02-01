@@ -10,3 +10,8 @@ yarn start
 # Code lint
 
 ```yarn lint```
+
+
+# Build source code into `dist` directory
+
+```yarn build```

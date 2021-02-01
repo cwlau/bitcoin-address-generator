@@ -1,17 +1,26 @@
 # bitcoin-address-generator
 
-## Installation and start local server
+### Live Demo
+
+Live demo is pushed to a GitHub Page hosted at https://github.cwlau.com/bitcoin-address-generator/dist/
+
+
+### Installation and start local server
 
 ```
 yarn
 yarn start
 ```
 
-# Code lint
+### Code lint
 
-```yarn lint```
+```
+yarn lint
+```
 
 
-# Build source code into `dist` directory
+### Build source code into `dist` directory
 
-```yarn build```
+```
+yarn build
+```
